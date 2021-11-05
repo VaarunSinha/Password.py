@@ -2,6 +2,21 @@
 import secrets
 import stdiomask
 from cryptography.fernet import Fernet
+import os
+
+def authenticate(password, key):
+    if os.path.isfile('userPassword.txt'):
+        with open('userPassword.txt', 'r', encoding='utf-8') as f:
+            password_in_file = f.readlines()
+        fernet = Fernet(key)
+        if password == fernet.decrypt(password_in_file):
+            return True
+        
+    else:
+        print("You have no password. or you have deleted the file in which the file was stored in.")
+        return False
+    
+
 
 # ANCHOR: Function for generating password
 def generate_password(what_is_the_password_for):
@@ -78,6 +93,12 @@ def generate_password(what_is_the_password_for):
 
 
 print("Welcome to DA PASSWORD GENERATOR")
+while True:
+    what_the_user_wants = input("Do you want to acces previously generated passwords?(Y/N")
+    if what_the_user_wants != 'Y' and what_the_user_wants != 'N':
+        what_the_user_wants = input("Do you want to access previously generated passwords?(Y/N)\n")
+    else:
+        break
 
 if True:
     print("Enter Your Password: (This will be asked from you later when you will have to enter the password, to acces the passwords)")
@@ -94,7 +115,7 @@ if True:
 
     try:
         with open("userPassword.txt",'w',encoding = 'utf-8') as f:
-         f.write(f"Password: {encrypted_password}")
+         f.write(f"{encrypted_password}")
     finally:
         f.close()
 
