@@ -1,15 +1,32 @@
 # ANCHOR: IMPORTS
 import secrets
-import stdiomask
+import pwinput
 from cryptography.fernet import Fernet
 import os
+
+# FIXME: cryptography.fernet.InvalidToken
+# Solution: store key in a file then acces it as everythome the program runs the key is newly generated so it cannot acces previous passwords.
+#Problem: how to store the key securely if stored in plain text then it is a problem!
+
+def access_password(context, key):
+    if os.path.isfile(f'{context}_password.txt'):
+        print("File Exists Retreiving the password....")
+        with open(f'{context}_password.txt', 'r', encoding='base64') as f:
+            password_in_file = f.readlines()
+        fernet = Fernet(key)
+        return fernet.decrypt(password_in_file)
+    else:
+        print("The File with the password does not exist.")
 
 def authenticate(password, key):
     if os.path.isfile('userPassword.txt'):
         with open('userPassword.txt', 'r', encoding='utf-8') as f:
             password_in_file = f.readlines()
         fernet = Fernet(key)
-        if password == fernet.decrypt(password_in_file):
+        password_in_str = ''.join(password_in_file)
+        password_in_bytes = bytes(password_in_str, encoding='utf-8')
+        if password == fernet.decrypt(password_in_bytes):
+            print("Authentication successful!")
             return True
         
     else:
@@ -93,23 +110,24 @@ def generate_password(what_is_the_password_for):
 
 
 print("Welcome to DA PASSWORD GENERATOR")
+key = Fernet.generate_key()
+fernet = Fernet(key)
 while True:
-    what_the_user_wants = input("Do you want to acces previously generated passwords?(Y/N")
+    what_the_user_wants = input("Do you want to access previously generated passwords?(Y/N)\n")
     if what_the_user_wants != 'Y' and what_the_user_wants != 'N':
         what_the_user_wants = input("Do you want to access previously generated passwords?(Y/N)\n")
     else:
         break
 
-if True:
+
+if what_the_user_wants == 'N':
     print("Enter Your Password: (This will be asked from you later when you will have to enter the password, to acces the passwords)")
 
-    user_password = stdiomask.getpass()
+    user_password = pwinput.pwinput(mask='X')
 
     what_is_the_password_for = input("What is the Password for? ")
     print("Please enter numbers.")
 
-    key = Fernet.generate_key()
-    fernet = Fernet(key)
 
     encrypted_password = fernet.encrypt(bytes(user_password, encoding='utf8'))
 
@@ -120,3 +138,9 @@ if True:
         f.close()
 
     generate_password(what_is_the_password_for)
+elif what_the_user_wants == 'Y':
+    password_input = pwinput.pwinput(mask='X')
+    if authenticate(password_input, key):
+        which_password_user_wants = input("Which Password do you want?: \n")
+        password_which_user_wants = access_password(what_the_user_wants, key)
+        print(password_which_user_wants)
