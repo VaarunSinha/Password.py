@@ -5,7 +5,7 @@ from cryptography.fernet import Fernet
 import os
 
 # FIXME: cryptography.fernet.InvalidToken
-# Solution: store key in a file then acces it as everythome the program runs the key is newly generated so it cannot acces previous passwords.
+# Solution: store key in a file then access it as everytime the program runs the key is newly generated so it cannot access previous passwords.
 #Problem: how to store the key securely if stored in plain text then it is a problem!
 
 def access_password(context, key):
