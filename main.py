@@ -1,4 +1,5 @@
 import secrets
+import random
 import string
 
 try:
@@ -25,50 +26,51 @@ except ValueError:
         input("How many big letters should your password have:  "))
 
 
-def generate_password(what_is_the_password_for, num_of_numbers, num_of_special, num_of_small_letters, num_of_cap_letters):
+def generate_password( num_of_numbers, num_of_special, num_of_small_letters, num_of_cap_letters):
 
-    small_letters = string.ascii_lowercase
+    smallLetters = list(string.ascii_lowercase)
 
-    Big_letters = string.ascii_uppercase
+    bigLetters = list(string.ascii_uppercase)
 
-    Special_Characters = string.punctuation
+    specialCharacters = list(string.punctuation)
 
-    numbers = string.digits
+    numbers = list(string.digits)
 
-    Sp_part = ""
+    spPart = ""
 
-    Num_part = ""
+    numPart = ""
 
-    Small_Part = ""
+    smallPart = ""
 
-    Big_Part = ""
+    bigPart = ""
     
     # ANCHOR: Generating Password
     for i in range(1, num_of_numbers + 1):
-        rand_num = secrets.choice(numbers)
-        Num_part = Num_part + str(rand_num)
+        randNum = secrets.choice(numbers)
+        numPart = numPart + str(randNum)
 
 
     for i in range(1, num_of_special + 1):
-        rand_sp = secrets.choice(Special_Characters)
-        Sp_part = Sp_part + rand_sp
+        randSp = secrets.choice(specialCharacters)
+        spPart = spPart + randSp
 
 
     for i in range(1, num_of_small_letters + 1):
-        rand_sm = secrets.choice(small_letters)
-        Small_Part = Small_Part + rand_sm
+        randSm = secrets.choice(smallLetters)
+        smallPart = smallPart + randSm
 
 
     for i in range(1, num_of_cap_letters + 1):
-        rand_big = secrets.choice(Big_letters)
-        Big_Part = Big_Part + rand_big
+        randBig = secrets.choice(bigLetters)
+        bigPart = bigPart + randBig
 
-
-    Password = Num_part + Sp_part + Small_Part + Big_Part
+    password = list(numPart + spPart + smallPart + bigPart)
+    random.shuffle(password)
+    password_str = ''.join(password)
     
-    print(f"Password for {what_is_the_password_for}:{Password}")
-    
-    return Password
+    return password_str
 
 
-generate_password("facebook", num_of_numbers, num_of_special, num_of_small_letters, num_of_cap_letters)
+password = generate_password( num_of_numbers, num_of_special, num_of_small_letters, num_of_cap_letters)
+
+print(f"Password for facebook {password}")
